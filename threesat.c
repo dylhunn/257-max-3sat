@@ -16,7 +16,7 @@ int read_input(char *file_path, formula *f) {
 		if (tok[0] == 'c') continue; // comment line
 		if (tok[0] == 'p') { // problem definition line
 			if ((tok = strtok(NULL, " ")) == 0) return -2; // missing data
-			assert(strncmp(tok, "cnf", 3) == 0);
+			if (strncmp(tok, "cnf", 3) != 0) return -6; // bad file type token
 			if ((tok = strtok(NULL, " ")) == 0) return -2; // missing data
 			f->num_vars = atoi(tok);
 			if ((tok = strtok(NULL, " ")) == 0) return -2; // missing data
