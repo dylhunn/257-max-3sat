@@ -4,8 +4,6 @@
 
 This is a collection of 3SAT solvers written in C, as part of my final project for Stanford **CS257 / Phil356C** (Logic and AI).
 
-[TOC]
-
 Repo overview
 =============
 
@@ -20,7 +18,7 @@ Project summary
 
 The purpose of this project is to better understand various algorithms for **3SAT** and **MAX-3SAT** by implementing them, and then by comparing them through benchmarking.
 
-**3SAT** is a variant of the boolean satisfiability problem which requires formulae in conjunctive normal form, or three variables per clause.
+**3SAT** is a variant of the boolean satisfiability problem which requires formulae in conjunctive normal form, with three variables per clause.
 
 Building the project
 ====================
