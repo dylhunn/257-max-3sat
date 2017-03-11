@@ -18,7 +18,7 @@ Project summary
 
 The purpose of this project is to better understand various algorithms for **3SAT** and **MAX-3SAT** by implementing them, and then by comparing them through benchmarking.
 
-**3SAT** is a variant of the boolean satisfiability problem which requires formulae in conjunctive normal form, with three variables per clause.
+**3SAT** is a variant of the boolean satisfiability problem which requires formulae in conjunctive normal form, with three variables per clause. It is particularly useful because it is a "canonical" NP-Complete problem, and in practice, many hard problems are reduced to 3-CNF form as the preferred method of solving. 
 
 Building the project
 ====================

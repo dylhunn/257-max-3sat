@@ -1,14 +1,25 @@
 #include "util.h"
 #include "algorithms.h"
+#include <signal.h>
 
 // output colors
 #define RED   "\x1B[31m"
 #define GRN   "\x1B[32m"
+#define YEL   "\x1B[33m"
+#define BLU   "\x1B[34m"
+#define MAG   "\x1B[35m"
+#define CYN   "\x1B[36m"
+#define WHT   "\x1B[37m"
 #define RESET "\x1B[0m"
 
 #define expect(x) if ((x) == 0) {printf(RED "line %d (%s) " RESET, \
 	(__LINE__), (__FILE__)); return 0;}
 
+// Gracefully print our own error message upon fatal errors.
+void sig_handler(int sig_num) {
+	printf(RED " (fatal signal intercepted)\n" RESET);
+	exit(1);
+}
 
 int test_read_basic_file() {
 	formula f;
@@ -79,14 +90,25 @@ void test_wrapper(char *test_name, int (*f)(void)) {
 }
 
 int main() {
+	// Handle fatal signals to print failure message gracefully.
+	signal(SIGSEGV, sig_handler);
+	signal(SIGFPE, sig_handler);
+	signal(SIGILL, sig_handler);
+	signal(SIGBUS, sig_handler);
+	signal(SIGABRT, sig_handler);
+	signal(SIGIOT, sig_handler);
+	signal(SIGSYS, sig_handler);
+
 	printf("-----------------------\n");
 	printf("| STARTING TEST SUITE |\n");
-	printf("-----------------------");
-
+	printf("-----------------------\n");
+	printf(CYN "This suite checks that the code compiles and runs as "
+		"expected on your system." RESET);
 	test_wrapper("file reading", test_read_basic_file);
-	test_wrapper("too many vars in clause", test_too_many_vars);
+	test_wrapper("file reading with error (too many vars in clause)",
+		test_too_many_vars);
 	test_wrapper("basic solution checking", test_check_basic_solutions);
-	test_wrapper("naive solver", test_naive_solve);
+	test_wrapper("naive 3sat solver", test_naive_solve);
 
 	printf("\n-----------------------\n");
 	printf("| FINISHED TEST SUITE |\n");
