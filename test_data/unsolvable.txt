@@ -1,0 +1,6 @@
+c An unsolvable 3SAT file
+p cnf 2 4
+1 1 2
+1 1 -2
+-1 -1 2
+-1 -1 -2

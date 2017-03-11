@@ -43,6 +43,7 @@ int read_input(const char *file_path, formula *f) {
 }
 
 int check_solution(const formula f, const solution s) {
+	if (s == NULL) return 0;
 	for (int i = 0; i < f.num_clauses; i++) {
 		for (int j = 0; j < kVarsPerClause; j++) {
 			if (f.clauses[i][j] > 0) {
@@ -62,4 +63,15 @@ void free_formula(formula f) {
 		free(f.clauses[i]);
 	}
 	free(f.clauses);
+}
+
+void print_solution(solution s, int l) {
+	if (s == NULL) printf("NULL solution (no solution)\n");
+	if (l == 0) {
+		printf("[]\n");
+		return;
+	}
+	printf("[%d", s[0]);
+	for (int i = 1; i < l; i++) printf(",%d", s[i]);
+	printf("]\n");
 }

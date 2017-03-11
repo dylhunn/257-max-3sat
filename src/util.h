@@ -9,12 +9,14 @@
 #define kVarsPerClause 3
 
 typedef struct formula {
-	unsigned int num_vars;
-	unsigned int num_clauses;
+	int num_vars;
+	int num_clauses;
 	int **clauses;
 } formula;
 
-// A solution is an array of bools.
+/* A solution is an array of bools (ints)
+ * a NULL solution means no solution is possible.
+ */
 typedef int *solution;
 
 /* Read a problem from a file using the DIMACS-CNF format.
@@ -32,6 +34,10 @@ int check_solution(const formula f, const solution s);
 /* Free the memory allocated for clauses in a formula.
  */
 void free_formula(formula f);
+
+/* Print a solution array.
+*/
+void print_solution(solution s, int l);
 
 #define _util
 #endif

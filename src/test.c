@@ -1,6 +1,6 @@
-#include "util.h"
-#include "algorithms.h"
 #include <signal.h>
+#include "algorithms.h"
+#include "util.h"
 
 // output colors
 #define RED   "\x1B[31m"
@@ -62,7 +62,8 @@ int test_check_basic_solutions() {
 
 int test_naive_solve() {
 	formula f;
-	const char * const file_paths[] = 
+	// solvable
+	char *file_paths[] = 
 		{"../test_data/test0.txt", "../test_data/test1.txt"};
 	for (int i = 0; i < 2; i++) {
 		int status = read_input(file_paths[i], &f);
@@ -71,6 +72,16 @@ int test_naive_solve() {
 		expect(check_solution(f, s));
 		free_formula(f);
 		free(s);
+	}
+	//unsolvable
+	char *file_paths2[] = {"../test_data/unsolvable.txt"};
+	for (int i = 0; i < 1; i++) {
+		int status = read_input(file_paths2[i], &f);
+		expect(status == 0);
+		solution s = naive_solve(f);
+		expect(s == NULL);
+		expect(!check_solution(f, s));
+		free_formula(f);
 	}
 	return 1;
 }
@@ -109,7 +120,6 @@ int main() {
 		test_too_many_vars);
 	test_wrapper("basic solution checking", test_check_basic_solutions);
 	test_wrapper("naive 3sat solver", test_naive_solve);
-
 	printf("\n-----------------------\n");
 	printf("| FINISHED TEST SUITE |\n");
 	printf("-----------------------\n\n");
