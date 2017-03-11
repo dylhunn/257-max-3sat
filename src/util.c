@@ -45,12 +45,21 @@ int read_input(const char *file_path, formula *f) {
 int check_solution(const formula f, const solution s) {
 	for (int i = 0; i < f.num_clauses; i++) {
 		for (int j = 0; j < kVarsPerClause; j++) {
-			int var_satisfies_clause = (f.clauses[i][j] > 0) ?
-				s[f.clauses[i][j]] : !s[-f.clauses[i][j]];
-			if (var_satisfies_clause) goto next; // continue outer loop
+			if (f.clauses[i][j] > 0) {
+				if (s[f.clauses[i][j]-1]) goto next;
+			} else {
+				if (!s[(-f.clauses[i][j])-1]) goto next;
+			}
 		}
 		return 0; // clause not satisfied
 		next: ; // continue outer loop
 	}
 	return 1; // all clauses satisfied
+}
+
+void free_formula(formula f) {
+	for (int i = 0; i < f.num_clauses; i++) {
+		free(f.clauses[i]);
+	}
+	free(f.clauses);
 }

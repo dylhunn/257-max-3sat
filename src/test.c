@@ -1,4 +1,5 @@
 #include "util.h"
+#include "algorithms.h"
 
 // output colors
 #define RED   "\x1B[31m"
@@ -21,10 +22,11 @@ int test_read_basic_file() {
 	expect(f.clauses[1][0] == 4);
 	expect(f.clauses[1][1] == 2);
 	expect(f.clauses[1][2] == 5);
+	free_formula(f);
 	return 1;
 }
 
-int test_check_basic_solution() {
+int test_check_basic_solutions() {
 	formula f;
 	int status = read_input("../test_data/test0.txt", &f);
 	expect(status == 0);
@@ -34,6 +36,31 @@ int test_check_basic_solution() {
 	expect(check_solution(f, s1));
 	expect(check_solution(f, s2));
 	expect(!check_solution(f, s3));
+	free_formula(f);
+	status = read_input("../test_data/test1.txt", &f);
+	expect(status == 0);
+	solution s4 = (int []) {0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0}; // bad
+	solution s5 = (int []) {1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1}; // bad
+	solution s6 = (int []) {1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1}; // good
+	expect(!check_solution(f, s4));
+	expect(!check_solution(f, s5));
+	expect(check_solution(f, s6));
+	free_formula(f);
+	return 1;
+}
+
+int test_naive_solve() {
+	formula f;
+	const char * const file_paths[] = 
+		{"../test_data/test0.txt", "../test_data/test1.txt"};
+	for (int i = 0; i < 2; i++) {
+		int status = read_input(file_paths[i], &f);
+		expect(status == 0);
+		solution s = naive_solve(f);
+		expect(check_solution(f, s));
+		free_formula(f);
+		free(s);
+	}
 	return 1;
 }
 
@@ -58,7 +85,8 @@ int main() {
 
 	test_wrapper("file reading", test_read_basic_file);
 	test_wrapper("too many vars in clause", test_too_many_vars);
-	test_wrapper("check_solution", test_check_basic_solution);
+	test_wrapper("basic solution checking", test_check_basic_solutions);
+	test_wrapper("naive solver", test_naive_solve);
 
 	printf("\n-----------------------\n");
 	printf("| FINISHED TEST SUITE |\n");
