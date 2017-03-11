@@ -1,4 +1,0 @@
-c A test 3SAT file
-p cnf 5 2
-1 -2 3
-4 2 5
