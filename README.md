@@ -32,4 +32,4 @@ Specifically:
     git clone https://github.com/dylhunn/257-max-3sat.git
     cd 257-max-3sat/src
     make test
-will compile the project and run all tests to verify that it works. This was tested on Fedora 25, and should work on any Linux distro (perhaps Macs as well). Windows users might have to change the line endings of the test data.
+will compile the project and run all tests to verify that it works. This was tested on Fedora 25, and should work on any modern Linux or Mac system. Windows users might have to change the line endings of the test data.
