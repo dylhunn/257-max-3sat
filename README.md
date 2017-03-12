@@ -35,3 +35,7 @@ Specifically:
     cd 257-max-3sat/src
     make test
 will compile the project and run all tests to verify that it works. This was tested on Fedora 25, and should work on any modern Linux or Mac system. Windows users might have to change the line endings of the test data.
+
+License
+=======
+This code is free software available under the [GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html) or newer, as published by the Free Software Foundation.

@@ -1,6 +1,7 @@
 #ifndef _algorithms
 
 #include "util.h"
+#include "hashset.h"
 
 /* Solves a provided formula. Caller must free the returned solution, if one is found.
  * Returns NULL if no solution is found.
