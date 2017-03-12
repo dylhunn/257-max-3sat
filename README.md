@@ -4,6 +4,8 @@
 
 This is a collection of 3SAT solvers written in C, as part of my final project for Stanford **CS257 / Phil356C** (Logic and AI).
 
+This project is still a work in progress.
+
 Repo overview
 =============
 
@@ -28,6 +30,6 @@ You can build your own copy of the code by cloning the git repo, `cd`ing into th
 Specifically:
 
     git clone https://github.com/dylhunn/257-max-3sat.git
-    cd 257-max-3sat
+    cd 257-max-3sat/src
     make test
 will compile the project and run all tests to verify that it works. This was tested on Fedora 25, and should work on any Linux distro (perhaps Macs as well). Windows users might have to change the line endings of the test data.
