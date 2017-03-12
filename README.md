@@ -4,6 +4,8 @@
 
 This is a collection of 3SAT solvers written in C, as part of my final project for Stanford **CS257 / Phil356C** (Logic and AI).
 
+Fast start: skip to the "Building the project" section.
+
 This project is still a work in progress.
 
 Repo overview
