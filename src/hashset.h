@@ -16,21 +16,23 @@ typedef struct hashset {
 
 static int kExpansionFactor = 2;
 
-hashset make_hashset(int default_capacity);
+hashset hashset_make(int default_capacity);
 
-void free_hashset(hashset *h);
+void hashset_free(hashset *h);
 
-int contains(hashset *h, int item);
+int hashset_contains(hashset *h, int item);
 
-void insert(hashset *h, int item);
+void hashset_insert(hashset *h, int item);
 
 int hashset_remove(hashset *h, int item);
 
-hashset intersect(hashset *h, hashset other);
+hashset hashset_intersect(hashset *h, hashset *other);
 
-hashset unify(hashset *h, hashset other);
+hashset hashset_unify(hashset *h, hashset *other);
 
-int size(hashset *h);
+int hashset_size(hashset *h);
+
+void hashset_print(hashset *h);
 
 #define _hashset_h
 #endif

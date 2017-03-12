@@ -23,7 +23,58 @@ void sig_handler(int sig_num) {
 }
 
 int test_hashset_impl() {
-	hashset my_set = make_hashset(5);
+	hashset h = hashset_make(2);
+	expect(hashset_size(&h) == 0);
+	hashset_insert(&h, 1);
+	expect(hashset_size(&h) == 1);
+	hashset_insert(&h, 3);
+	expect(hashset_size(&h) == 2);
+	hashset_insert(&h, 2);
+	expect(hashset_size(&h) == 3);
+	hashset_insert(&h, 3);
+	expect(hashset_size(&h) == 3);
+	hashset_insert(&h, 4);
+	expect(hashset_size(&h) == 4);
+	hashset_insert(&h, 5);
+	expect(hashset_size(&h) == 5);
+	hashset_insert(&h, 6);
+	expect(hashset_size(&h) == 6);
+	expect(hashset_contains(&h, 1));
+	expect(hashset_contains(&h, 2));
+	expect(hashset_contains(&h, 3));
+	expect(hashset_contains(&h, 4));
+	expect(!hashset_contains(&h, 42));
+	expect(hashset_remove(&h, 1));
+	expect(hashset_remove(&h, 2));
+	expect(hashset_size(&h) == 4);
+	expect(hashset_remove(&h, 3));
+	expect(hashset_remove(&h, 4));
+	expect(!hashset_remove(&h, 2));
+	hashset_free(&h);
+	return 1;
+}
+
+int test_hashset_impl_advanced() {
+	hashset h = hashset_make(2);
+	for (int i = 0; i < 20; i++) {
+		hashset_insert(&h, i);
+	}
+	hashset h2 = hashset_make(2);
+	for (int i = 10; i < 25; i++) {
+		hashset_insert(&h2, i);
+	}
+	expect(hashset_size(&h) == 20);
+	expect(hashset_size(&h2) == 15);
+	hashset hu = hashset_unify(&h, &h2);
+	hashset hi = hashset_intersect(&h, &h2);
+	expect(hashset_size(&hu) == 25);
+	expect(hashset_size(&hi) == 10);
+	for (int i = 0; i < 25; i++) expect(hashset_contains(&hu, i));
+	for (int i = 10; i < 20; i++) expect(hashset_contains(&hi, i));
+	hashset_free(&h);
+	hashset_free(&h2);
+	hashset_free(&hu);
+	hashset_free(&hi);
 	return 1;
 }
 
@@ -133,7 +184,8 @@ int main() {
 	test_wrapper("file reading with error (too many vars in clause)",
 		test_too_many_vars);
 	test_wrapper("hashset implementation", test_hashset_impl);
-	test_wrapper("basic solution checking", test_check_basic_solutions);
+	test_wrapper("hashset advanced features", test_hashset_impl_advanced);
+	test_wrapper("basic 3sat solution checking", test_check_basic_solutions);
 	test_wrapper("naive 3sat solver", test_naive_solve);
 	test_wrapper("clique 3sat solver", test_clique_solve);
 	printf("\n-----------------------\n");

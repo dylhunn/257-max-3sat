@@ -4,7 +4,7 @@ int hash(hashset *h, int item) {
 	return item % h->backing_size; // trivial identity hash
 }
 
-hashset make_hashset(int default_capacity) {
+hashset hashset_make(int default_capacity) {
 	// remember to memset to 0
 	hashset new_hashset;
 	new_hashset.data = malloc(sizeof(hash_node*) * default_capacity);
@@ -14,26 +14,26 @@ hashset make_hashset(int default_capacity) {
 	return new_hashset;
 }
 
-void free_hashset(hashset *h) {
+void hashset_free(hashset *h) {
 	// TODO
 }
 
 void expand_hashset(hashset *h) {
-	hashset new_set = make_hashset(h->backing_size * kExpansionFactor);
+	hashset new_set = hashset_make(h->backing_size * kExpansionFactor);
 	for (int i = 0; i < h->backing_size; i++) {
 		hash_node *next_node = h->data[i];
 		while (next_node != NULL) {
-			insert(&new_set, next_node->element);
+			hashset_insert(&new_set, next_node->element);
 			next_node = next_node->next;
 		}
 	}
-	free_hashset(h);
+	hashset_free(h);
 	h->data = new_set.data;
 	h->count = new_set.count;
 	h->backing_size = new_set.backing_size;
 }
 
-int contains(hashset *h, int item) {
+int hashset_contains(hashset *h, int item) {
 	int bucket = hash(h, item);
 	if (h->data[bucket] == NULL) return 0;
 	hash_node *existing_node = h->data[bucket];
@@ -44,9 +44,9 @@ int contains(hashset *h, int item) {
 	return (existing_node->element == item); // last item
 }
 
-void insert(hashset *h, int item) {
-	if (contains(h, item)) return;
-	if (h->backing_size >= h->count - 1) expand_hashset(h);
+void hashset_insert(hashset *h, int item) {
+	if (hashset_contains(h, item)) return;
+	if (h->backing_size <= h->count + 1) expand_hashset(h);
 	h->count++;
 	hash_node *new_node = malloc(sizeof(hash_node));
 	new_node->element = item;
@@ -87,14 +87,51 @@ int hashset_remove(hashset *h, int item) {
 	return 0;
 }
 
-hashset intersect(hashset *h, hashset other) {
-	
+hashset hashset_intersect(hashset *h, hashset *other) {
+	hashset new_set = hashset_make(hashset_size(h)); // TODO better guess
+	for (int i = 0; i < other->backing_size; i++) {
+		hash_node *next_node = other->data[i];
+		while (next_node != NULL) {
+			if (hashset_contains(h, next_node->element)) {
+				hashset_insert(&new_set, next_node->element);
+			}
+			next_node = next_node->next;
+		}
+	}
+	return new_set;
 }
 
-hashset unify(hashset *h, hashset other) {
-
+hashset hashset_unify(hashset *h, hashset *other) {
+	hashset new_set = hashset_make((hashset_size(h) + hashset_size(other))
+		* kExpansionFactor);
+	for (int i = 0; i < h->backing_size; i++) {
+		hash_node *next_node = h->data[i];
+		while (next_node != NULL) {
+			hashset_insert(&new_set, next_node->element);
+			next_node = next_node->next;
+		}
+	}
+	for (int i = 0; i < other->backing_size; i++) {
+		hash_node *next_node = other->data[i];
+		while (next_node != NULL) {
+			hashset_insert(&new_set, next_node->element);
+			next_node = next_node->next;
+		}
+	}
+	return new_set;
 }
 
-int size(hashset *h) {
+int hashset_size(hashset *h) {
 	return h->count;
+}
+
+void hashset_print(hashset *h) {
+	for (int i = 0; i < h->backing_size; i++) {
+		hash_node *next_node = h->data[i];
+		while (next_node != NULL) {
+			printf("%d, ", next_node->element);
+			next_node = next_node->next;
+		}
+	}
+	printf("\n");
 }
