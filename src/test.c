@@ -1,6 +1,7 @@
 #include <signal.h>
 #include "algorithms.h"
 #include "util.h"
+#include "hashset.h"
 
 // output colors
 #define RED   "\x1B[31m"
@@ -19,6 +20,11 @@
 void sig_handler(int sig_num) {
 	printf(RED " (fatal signal intercepted)\n" RESET);
 	exit(1);
+}
+
+int test_hashset_impl() {
+	hashset my_set = make_hashset(5);
+	return 1;
 }
 
 int test_read_basic_file() {
@@ -60,7 +66,7 @@ int test_check_basic_solutions() {
 	return 1;
 }
 
-int test_naive_solve() {
+int test_generic_solve(solution (*fn)(const formula)) {
 	formula f;
 	// solvable
 	char *file_paths[] = 
@@ -68,7 +74,7 @@ int test_naive_solve() {
 	for (int i = 0; i < 2; i++) {
 		int status = read_input(file_paths[i], &f);
 		expect(status == 0);
-		solution s = naive_solve(f);
+		solution s = (*fn)(f);
 		expect(check_solution(f, s));
 		free_formula(f);
 		free(s);
@@ -78,12 +84,20 @@ int test_naive_solve() {
 	for (int i = 0; i < 1; i++) {
 		int status = read_input(file_paths2[i], &f);
 		expect(status == 0);
-		solution s = naive_solve(f);
+		solution s = (*fn)(f);
 		expect(s == NULL);
 		expect(!check_solution(f, s));
 		free_formula(f);
 	}
 	return 1;
+}
+
+int test_naive_solve() {
+	return test_generic_solve(naive_solve);
+}
+
+int test_clique_solve() {
+	return test_generic_solve(max_clique_solve);
 }
 
 int test_too_many_vars() {
@@ -118,8 +132,10 @@ int main() {
 	test_wrapper("file reading", test_read_basic_file);
 	test_wrapper("file reading with error (too many vars in clause)",
 		test_too_many_vars);
+	test_wrapper("hashset implementation", test_hashset_impl);
 	test_wrapper("basic solution checking", test_check_basic_solutions);
 	test_wrapper("naive 3sat solver", test_naive_solve);
+	test_wrapper("clique 3sat solver", test_clique_solve);
 	printf("\n-----------------------\n");
 	printf("| FINISHED TEST SUITE |\n");
 	printf("-----------------------\n\n");

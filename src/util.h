@@ -1,5 +1,6 @@
-#ifndef _util
+#ifndef _util_h
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,5 +40,5 @@ void free_formula(formula f);
 */
 void print_solution(solution s, int l);
 
-#define _util
+#define _util_h
 #endif

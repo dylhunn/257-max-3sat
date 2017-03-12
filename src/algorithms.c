@@ -22,3 +22,57 @@ solution naive_solve(const formula f) {
 	return s;
 }
 
+int **generate_clique_adjacency_matrix(const formula f) {
+	int num_terms = f.num_clauses * kVarsPerClause;
+
+	// construct a 2D array of appropriate size
+	int **compatible = malloc(sizeof(int*) * num_terms);
+	for (int i = 0; i < num_terms; i++) {
+		compatible[i] = malloc(sizeof(int) * num_terms);
+		// initialize every cell to 0
+		for (int j = 0; j < num_terms; j++) {
+			compatible[i][j] = 0;
+		}
+	}
+
+	// for every pairing of terms, determine if they are compatible
+	for (int i = 0; i < num_terms; i++) {
+		for (int j = i + 1; j < num_terms; j++) {
+			// skip j if it's in the same clause as i; not compatible
+			if (i / 3 == j / 3) continue;
+			// incompatible if one variable is a negation of the other
+			if (f.clauses[i/3][i%3] == -f.clauses[j/3][j%3]) continue;
+			// otherwise, compatible
+			compatible[i][j] = compatible[j][i] = 1;
+		}
+	}
+
+	return compatible;
+}
+
+void free_clique_adjacency_matrix(int **matrix, int size) {
+	// free the arrays
+	for (int i = 0; i < size; i++) {
+		free(matrix[i]);
+	}
+	free(matrix);
+}
+
+/* The Bron-Kerbosch algorithm is an efficient method of finding max-cliques.
+ */
+void bron_kerbosch_search() {
+
+}
+
+solution max_clique_solve(const formula f) {
+	solution s = malloc(sizeof(int) * f.num_vars);
+	int num_terms = f.num_clauses * kVarsPerClause;
+	int **compatible = generate_clique_adjacency_matrix(f);
+	
+	// if an assignment exists, it is a max-clique with size num_clauses!
+
+
+	free_clique_adjacency_matrix(compatible, num_terms);
+	return s;
+}
+

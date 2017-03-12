@@ -1,12 +1,12 @@
-CFLAGS = -Ofast -flto -ffast-math -Wall
+CFLAGS = -O0 -flto -ffast-math -Wall -ggdb
 
-all: util.o wrapper.o algorithms.o
+all: util.o wrapper.o algorithms.o hashset.o
 	@clang $(CFLAGS) $^ -o threesat
 	@rm -f *.o
-test: util.o test.o algorithms.o
+test: util.o test.o algorithms.o hashset.o
 	@clang $(CFLAGS) $^ -o testoutput
 	@-./testoutput
-	@make clean --no-print-directory
+	@rm -f *.o
 clean:
 	@rm -f threesat
 	@rm -f testoutput
@@ -20,3 +20,4 @@ util.o: util.h util.c
 test.o: test.c
 wrapper.o: wrapper.c
 algorithms.o: algorithms.h algorithms.c
+hashset.o: hashset.h hashset.c
