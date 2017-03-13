@@ -11,6 +11,10 @@ hashset hashset_make(int default_capacity) {
 	for (int i = 0; i < default_capacity; i++) new_hashset.data[i] = 0;
 	new_hashset.count = 0;
 	new_hashset.backing_size = default_capacity;
+	new_hashset.iter_previously_found_node = NULL;
+	new_hashset.previously_found_node_bucket = -1;
+	new_hashset.p_iter_previously_found_node = NULL;
+	new_hashset.p_previously_found_node_bucket = -1;
 	return new_hashset;
 }
 
@@ -18,7 +22,7 @@ void hashset_free(hashset *h) {
 	// TODO
 }
 
-void expand_hashset(hashset *h) {
+void hashset_expand(hashset *h) {
 	hashset new_set = hashset_make(h->backing_size * kExpansionFactor);
 	for (int i = 0; i < h->backing_size; i++) {
 		hash_node *next_node = h->data[i];
@@ -44,9 +48,9 @@ int hashset_contains(hashset *h, int item) {
 	return (existing_node->element == item); // last item
 }
 
-void hashset_insert(hashset *h, int item) {
-	if (hashset_contains(h, item)) return;
-	if (h->backing_size <= h->count + 1) expand_hashset(h);
+int hashset_insert(hashset *h, int item) {
+	if (hashset_contains(h, item)) return 0;
+	if (h->backing_size <= h->count + 1) hashset_expand(h);
 	h->count++;
 	hash_node *new_node = malloc(sizeof(hash_node));
 	new_node->element = item;
@@ -54,7 +58,7 @@ void hashset_insert(hashset *h, int item) {
 	int bucket = hash(h, item);
 	if (h->data[bucket] == NULL) {
 		h->data[bucket] = new_node;
-		return;
+		return 1;
 	}
 	// append to list
 	hash_node *existing_node = h->data[bucket];
@@ -62,6 +66,7 @@ void hashset_insert(hashset *h, int item) {
 		existing_node = existing_node->next;
 	}
 	existing_node->next = new_node;
+	return 1;
 }
 
 int hashset_remove(hashset *h, int item) {
@@ -88,7 +93,7 @@ int hashset_remove(hashset *h, int item) {
 }
 
 hashset hashset_intersect(hashset *h, hashset *other) {
-	hashset new_set = hashset_make(hashset_size(h)); // TODO better guess
+	hashset new_set = hashset_make(h->backing_size); // TODO better guess
 	for (int i = 0; i < other->backing_size; i++) {
 		hash_node *next_node = other->data[i];
 		while (next_node != NULL) {
@@ -136,59 +141,85 @@ void hashset_print(hashset *h) {
 	printf("\n");
 }
 
-// private data used for iterator
-// note: iterator should NOT be used internally, since doing so might corrupt
-// user iteration
-static int previously_found_node_bucket = -1;
-static hash_node *iter_previously_found_node = NULL;
+hashset hashset_copy(hashset *h) {
+	hashset newh = hashset_make(10);
+	for (int i = 0; i < h->backing_size; i++) {
+		hash_node *next_node = h->data[i];
+		while (next_node != NULL) {
+			hashset_insert(&newh, next_node->element);
+			next_node = next_node->next;
+		}
+	}
+	return newh;
+}
 
 int hashset_iter_first(hashset *iter_h) {
-	iter_previously_found_node = NULL;
-	previously_found_node_bucket = -1;
+	iter_h->iter_previously_found_node = NULL;
+	iter_h->previously_found_node_bucket = -1;
+	iter_h->p_iter_previously_found_node = NULL;
+	iter_h->p_previously_found_node_bucket = -1;
 	
 	for (int i = 0; i < iter_h->backing_size; i++) {
 		hash_node *curr_node = iter_h->data[i];
 		if (curr_node == NULL) continue;
-		previously_found_node_bucket = i;
-		iter_previously_found_node = curr_node;
+		iter_h->previously_found_node_bucket = i;
+		iter_h->iter_previously_found_node = curr_node;
 		return curr_node->element;
 	} 
-
-	exit(1); // can't call first on empty set
+	return INT_MIN;
 }
 
 int hashset_iter_next(hashset *iter_h) {
-	hash_node *next_node = iter_previously_found_node->next;
+	// The first node might have been removed
+	if (iter_h->iter_previously_found_node == NULL) {
+		return hashset_iter_first(iter_h);
+	}
+
+	hash_node *next_node = iter_h->iter_previously_found_node->next;
 	if (next_node != NULL) {
-		iter_previously_found_node = next_node;
+		iter_h->p_iter_previously_found_node = iter_h->iter_previously_found_node;
+		iter_h->iter_previously_found_node = next_node;
 		return next_node->element;
 	}
 
-	int next_bucket = previously_found_node_bucket + 1;
+	int next_bucket = iter_h->previously_found_node_bucket + 1;
 	for (int i = next_bucket; i < iter_h->backing_size; i++) {
 		hash_node *curr_node = iter_h->data[i];
 		if (curr_node == NULL) continue;
-		iter_previously_found_node = curr_node;
-		previously_found_node_bucket = i;
+		iter_h->p_iter_previously_found_node = iter_h->iter_previously_found_node;
+		iter_h->iter_previously_found_node = curr_node;
+		iter_h->p_previously_found_node_bucket = iter_h->previously_found_node_bucket;
+		iter_h->previously_found_node_bucket = i;
 		return curr_node->element;
 	}
-
-	exit(1); // can't call next without a next item
+	return INT_MIN;
 }
 
-int hashset_iter_hasnext(hashset *iter_h) {
-	if (previously_found_node_bucket == -1 || iter_previously_found_node == NULL) {
-		return 0; // never called first
+/*int hashset_iter_hasnext(hashset *iter_h) {
+	if (iter_h->previously_found_node_bucket == -1 ||
+		iter_h->iter_previously_found_node == NULL) {
+			return 0; // never called first
 	}
 
-	hash_node *next_node = iter_previously_found_node->next;
+	hash_node *next_node = iter_h->iter_previously_found_node->next;
 	if (next_node != NULL) return 1;
 
-	int next_bucket = previously_found_node_bucket + 1;
+	int next_bucket = iter_h->previously_found_node_bucket + 1;
 	for (int i = next_bucket; i < iter_h->backing_size; i++) {
 		hash_node *curr_node = iter_h->data[i];
 		if (curr_node == NULL) continue;
 		return 1;
 	}
 	return 0;
+}*/
+
+void hashset_iter_remove(hashset *iter_h) {
+	if (iter_h->previously_found_node_bucket == -1 ||
+		iter_h->iter_previously_found_node == NULL) {
+			printf("(iterator_exception)");
+			exit(1);
+	}
+	hashset_remove(iter_h, iter_h->iter_previously_found_node->element);
+	iter_h->previously_found_node_bucket = iter_h->p_previously_found_node_bucket;
+	iter_h->iter_previously_found_node = iter_h->p_iter_previously_found_node;
 }

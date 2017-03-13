@@ -86,12 +86,47 @@ int test_hashset_iterator() {
 		hashset_insert(&tracker, i);
 	}
 	int count = 0;
-	for (int i = hashset_iter_first(&h); hashset_iter_hasnext(&h); i = hashset_iter_next(&h)) {
+	for (int i = hashset_iter_first(&h); i != INT_MIN; i = hashset_iter_next(&h)) {
 		count++;
 		expect(hashset_contains(&tracker, i));
 	}
 	expect(count == (hashset_size(&h)));
 	expect(count == (hashset_size(&tracker)));
+	hashset_free(&h);
+	hashset_free(&tracker);
+	return 1;
+}
+
+int test_hashset_iterator_advanced() {
+	hashset h = hashset_make(15);
+	hashset_insert(&h, 3);
+	hashset_insert(&h, 5);
+	hashset_insert(&h, 7);
+	hashset_insert(&h, 9);
+	expect(hashset_size(&h) == 4);
+	int elem = hashset_iter_first(&h);
+	expect(elem == 3);
+	hashset_iter_remove(&h);
+	expect(hashset_size(&h) == 3);
+	elem = hashset_iter_next(&h);
+	expect(elem == 5);
+	elem = hashset_iter_first(&h);
+	expect(elem == 5);
+	hashset_insert(&h, 11);
+	expect(hashset_size(&h) == 4);
+	elem = hashset_iter_next(&h);
+	expect(elem == 7);
+	hashset_iter_remove(&h);
+	expect(hashset_size(&h) == 3);
+	elem = hashset_iter_next(&h);
+	expect(elem == 9);
+	elem = hashset_iter_next(&h);
+	expect(elem == 11);
+	elem = hashset_iter_first(&h);
+	expect(elem == 5);
+	elem = hashset_iter_next(&h);
+	expect(elem == 9);
+	hashset_free(&h);
 	return 1;
 }
 
@@ -202,7 +237,8 @@ int main() {
 		test_too_many_vars);
 	test_wrapper("hashset implementation", test_hashset_impl);
 	test_wrapper("hashset advanced features", test_hashset_impl_advanced);
-	test_wrapper("hashset iterator", test_hashset_impl_advanced);
+	test_wrapper("hashset iterator", test_hashset_iterator);
+	test_wrapper("hashset iterator advanced features", test_hashset_iterator_advanced);
 	test_wrapper("basic 3sat solution checking", test_check_basic_solutions);
 	test_wrapper("naive 3sat solver", test_naive_solve);
 	test_wrapper("clique 3sat solver", test_clique_solve);

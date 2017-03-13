@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <limits.h>
 
 // internal use
 typedef struct hash_node {
@@ -13,6 +14,10 @@ typedef struct hashset {
 	hash_node **data; // array of pointers to nodes; internal use
 	int count; // actual "size"
 	int backing_size; // internal use
+	int previously_found_node_bucket; // internal use
+	hash_node *iter_previously_found_node; // internal use
+	int p_previously_found_node_bucket; // internal use
+	hash_node *p_iter_previously_found_node; // internal use
 } hashset;
 
 static const int kExpansionFactor = 2;
@@ -23,7 +28,7 @@ void hashset_free(hashset *h);
 
 int hashset_contains(hashset *h, int item);
 
-void hashset_insert(hashset *h, int item);
+int hashset_insert(hashset *h, int item);
 
 int hashset_remove(hashset *h, int item);
 
@@ -35,16 +40,19 @@ int hashset_size(hashset *h);
 
 void hashset_print(hashset *h);
 
+hashset hashset_copy(hashset *h);
+
 /* Hashset iterator support
- * Modifying the set between calling first() and next() or hasnext() has
- * undefined behavior.
+ * Calling insert() or remove() while iterating has undefined behavior.
+ * Nested iteration not currently supported.
  */
-int hashset_iter_first(hashset *h);
+int hashset_iter_first(hashset *iter_h);
 
-int hashset_iter_next();
+int hashset_iter_next(hashset *iter_h);
 
-int hashset_iter_hasnext();
+//int hashset_iter_hasnext(hashset *iter_h);
 
+void hashset_iter_remove(hashset *iter_h);
 
 #define _hashset_h
 #endif
