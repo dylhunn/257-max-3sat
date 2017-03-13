@@ -195,24 +195,6 @@ int hashset_iter_next(hashset *iter_h) {
 	return INT_MIN;
 }
 
-/*int hashset_iter_hasnext(hashset *iter_h) {
-	if (iter_h->previously_found_node_bucket == -1 ||
-		iter_h->iter_previously_found_node == NULL) {
-			return 0; // never called first
-	}
-
-	hash_node *next_node = iter_h->iter_previously_found_node->next;
-	if (next_node != NULL) return 1;
-
-	int next_bucket = iter_h->previously_found_node_bucket + 1;
-	for (int i = next_bucket; i < iter_h->backing_size; i++) {
-		hash_node *curr_node = iter_h->data[i];
-		if (curr_node == NULL) continue;
-		return 1;
-	}
-	return 0;
-}*/
-
 void hashset_iter_remove(hashset *iter_h) {
 	if (iter_h->previously_found_node_bucket == -1 ||
 		iter_h->iter_previously_found_node == NULL) {

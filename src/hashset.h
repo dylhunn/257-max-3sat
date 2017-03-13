@@ -42,15 +42,14 @@ void hashset_print(hashset *h);
 
 hashset hashset_copy(hashset *h);
 
-/* Hashset iterator support
- * Calling insert() or remove() while iterating has undefined behavior.
- * Nested iteration not currently supported.
+/* first() and next() will return INT_MIN if no more elements exist.
+ * Calling insert() or remove() while iterating has undefined behavior;
+ * use the iter_remove() instead.
+ * Nested iteration on the same set not currently supported.
  */
 int hashset_iter_first(hashset *iter_h);
 
 int hashset_iter_next(hashset *iter_h);
-
-//int hashset_iter_hasnext(hashset *iter_h);
 
 void hashset_iter_remove(hashset *iter_h);
 

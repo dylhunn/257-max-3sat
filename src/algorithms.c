@@ -70,13 +70,13 @@ hashset get_neighbor_set(int **adjacency_matrix, int num_vertexes, int vertex_in
 	return neighbors;
 }
 
-/* Find a max-clique of size required_size.
- * Accepts three populated hashsets r, p, and x, and the required size.
+/* Find a max-clique of size n (required_size).
+ * Accepts three populated hashsets r, p, and x, and the required size (n).
  * Also requires the graph to be passed in as a parameter.
  * Returns 1 if a solution was found, and 0 if no solution was found.
  * The solution will be stored in r.
  */
-int bron_kerbosch_find_largest(hashset *r, hashset *p, hashset *x, int required_size,
+int bron_kerbosch_find_nclique(hashset *r, hashset *p, hashset *x, int required_size,
 	int **adjacency_matrix, int num_vertexes) {
 		if (hashset_size(p) == 0 && hashset_size(x) == 0
 			&& hashset_size(r) == required_size) {
@@ -88,7 +88,7 @@ int bron_kerbosch_find_largest(hashset *r, hashset *p, hashset *x, int required_
 				hashset neighbors_of_v = get_neighbor_set(adjacency_matrix, num_vertexes, v);
 				hashset p_insersect_n_of_v = hashset_intersect(p, &neighbors_of_v);
 				hashset x_insersect_n_of_v = hashset_intersect(x, &neighbors_of_v);
-				if (bron_kerbosch_find_largest(r, &p_insersect_n_of_v,
+				if (bron_kerbosch_find_nclique(r, &p_insersect_n_of_v,
 					&x_insersect_n_of_v, required_size, adjacency_matrix, num_vertexes)) {
 						hashset_free(&neighbors_of_v);
 						hashset_free(&p_insersect_n_of_v);
@@ -118,7 +118,7 @@ solution max_clique_solve(const formula f) {
 	hashset r = hashset_make(num_terms);
 	hashset x = hashset_make(num_terms);
 
-	int result = bron_kerbosch_find_largest(&r, &vertex_set, &x,
+	int result = bron_kerbosch_find_nclique(&r, &vertex_set, &x,
 		f.num_clauses, compatible, num_terms);
 
 	hashset assignments = hashset_make(num_terms);

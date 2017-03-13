@@ -173,8 +173,9 @@ int test_generic_solve(solution (*fn)(const formula)) {
 	formula f;
 	// solvable
 	char *file_paths[] = 
-		{"../test_data/test0.txt", "../test_data/test1.txt"};
-	for (int i = 0; i < 2; i++) {
+		{"../test_data/test0.txt", "../test_data/test1.txt",
+		"../test_data/test2.txt"};
+	for (int i = 0; i < 3; i++) {
 		int status = read_input(file_paths[i], &f);
 		expect(status == 0);
 		solution s = (*fn)(f);
@@ -233,7 +234,7 @@ int main() {
 	printf(CYN "This suite checks that the code compiles and runs as "
 		"expected on your system." RESET);
 	test_wrapper("file reading", test_read_basic_file);
-	test_wrapper("file reading with error (too many vars in clause)",
+	test_wrapper("file reading with error",
 		test_too_many_vars);
 	test_wrapper("hashset implementation", test_hashset_impl);
 	test_wrapper("hashset advanced features", test_hashset_impl_advanced);
