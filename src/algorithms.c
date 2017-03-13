@@ -58,9 +58,27 @@ void free_clique_adjacency_matrix(int **matrix, int size) {
 	free(matrix);
 }
 
+/* Accepts a graph encoded as an adjacency matrix, and a vertex, as specified
+ * by its index in the matrix. Returns a set of the indices of all adjacent
+ * vertexes.
+ */
+hashset get_neighbor_set(int **adjacency_matrix, int num_vertexes, int vertex_index) {
+	hashset neighbors = hashset_make(10);
+	for (int i = 0; i < num_vertexes; i++) {
+		if (adjacency_matrix[vertex_index][i]) hashset_insert(&neighbors, i);
+	}
+	return neighbors;
+}
+
+hashset bron_kerbosch_helper(hashset r, hashset p, hashset x) {
+	if (hashset_size(&p) == 0 && hashset_size(&x) == 0) {
+
+	}
+}
+
 /* The Bron-Kerbosch algorithm is an efficient method of finding max-cliques.
  */
-void bron_kerbosch_search() {
+hashset bron_kerbosch_search() {
 
 }
 

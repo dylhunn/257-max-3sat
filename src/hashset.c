@@ -135,3 +135,60 @@ void hashset_print(hashset *h) {
 	}
 	printf("\n");
 }
+
+// private data used for iterator
+// note: iterator should NOT be used internally, since doing so might corrupt
+// user iteration
+static int previously_found_node_bucket = -1;
+static hash_node *iter_previously_found_node = NULL;
+
+int hashset_iter_first(hashset *iter_h) {
+	iter_previously_found_node = NULL;
+	previously_found_node_bucket = -1;
+	
+	for (int i = 0; i < iter_h->backing_size; i++) {
+		hash_node *curr_node = iter_h->data[i];
+		if (curr_node == NULL) continue;
+		previously_found_node_bucket = i;
+		iter_previously_found_node = curr_node;
+		return curr_node->element;
+	} 
+
+	exit(1); // can't call first on empty set
+}
+
+int hashset_iter_next(hashset *iter_h) {
+	hash_node *next_node = iter_previously_found_node->next;
+	if (next_node != NULL) {
+		iter_previously_found_node = next_node;
+		return next_node->element;
+	}
+
+	int next_bucket = previously_found_node_bucket + 1;
+	for (int i = next_bucket; i < iter_h->backing_size; i++) {
+		hash_node *curr_node = iter_h->data[i];
+		if (curr_node == NULL) continue;
+		iter_previously_found_node = curr_node;
+		previously_found_node_bucket = i;
+		return curr_node->element;
+	}
+
+	exit(1); // can't call next without a next item
+}
+
+int hashset_iter_hasnext(hashset *iter_h) {
+	if (previously_found_node_bucket == -1 || iter_previously_found_node == NULL) {
+		return 0; // never called first
+	}
+
+	hash_node *next_node = iter_previously_found_node->next;
+	if (next_node != NULL) return 1;
+
+	int next_bucket = previously_found_node_bucket + 1;
+	for (int i = next_bucket; i < iter_h->backing_size; i++) {
+		hash_node *curr_node = iter_h->data[i];
+		if (curr_node == NULL) continue;
+		return 1;
+	}
+	return 0;
+}

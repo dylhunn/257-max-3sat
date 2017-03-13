@@ -13,7 +13,7 @@ Repo overview
 
 The source code for the project is stored in `/src`. Documentation for the code itself is contained in function comments of each header file.
 
-The project report and slides (forthcoming) are stored, along with it's *LaTeX* source, in the `/report` folder.
+The project report and slides (forthcoming) are stored, along with *LaTeX* source, in the `/report` folder.
 
 Data files for testing are stored in the `/test-data` folder.
 
