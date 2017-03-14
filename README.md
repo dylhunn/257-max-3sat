@@ -11,7 +11,7 @@ Repo overview
 
 The source code for the project is stored in `/src`. Documentation for the code itself is contained in function comments of each header file.
 
-The project slides (forthcoming) are stored, in the `/slides` folder.
+The project slides (forthcoming) are stored in the `/slides` folder.
 
 Data files for testing are stored in the `/test-data` folder.
 
