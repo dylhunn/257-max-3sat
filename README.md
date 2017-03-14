@@ -6,14 +6,12 @@ This is a collection of 3SAT solvers written in C, as part of my final project f
 
 To get started immediately, skip to the "Building the project" section.
 
-This project is still a work in progress.
-
 Repo overview
 =============
 
 The source code for the project is stored in `/src`. Documentation for the code itself is contained in function comments of each header file.
 
-The project report and slides (forthcoming) are stored, along with *LaTeX* source, in the `/report` folder.
+The project slides (forthcoming) are stored, in the `/slides` folder.
 
 Data files for testing are stored in the `/test-data` folder.
 
@@ -53,6 +51,13 @@ Algorithms
 The **Brute force exponential solver**, as it sounds, tries every possible assignment of truth values to variables, checking them along the way, and terminates when it finds a valid assignment.
 
 The **Bron-Kerbosch max-clique solver** first converts the formula into a graph, such that each term in a clause is a node, and all nodes are connected, with the exception of conflicting terms (*A ∧ ¬A*) and terms in the same clause. This graph is represented efficiently as an adjacency matrix. Then, it uses the [Bron-Kerbosch algorithm](https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) to find max cliques; as soon as a max-clique with as many nodes as the total number of clauses is found, the solver halts, since this must be a satisfying assignment.
+
+Other packaged code
+===================
+
+This project also includes a custom hashset implementation, which is an efficient chaining hashset for integers that provides iterators. This allows simpler hash function behavior (the identity function, since the key space is evenly distributed integer indices from the adjacency matrix) and removes reliance on external dependencies.
+
+Additionally, a custom C test harness is present, to which new test cases can be easily added.
 
 License
 =======
