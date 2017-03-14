@@ -9,7 +9,7 @@ void solve(char *path, solution (*f)(const formula f)) {
 		exit(1);
 	}
 	solution sol = f(frm);
-	if (sol == NULL ) {
+	if (sol == NULL) {
 		printf(MAG "No solution is possible.\n" RESET);
 		exit(0);
 	}

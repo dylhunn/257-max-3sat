@@ -34,7 +34,7 @@ Specifically:
     git clone https://github.com/dylhunn/257-max-3sat.git
     cd 257-max-3sat/src
     make test
-will compile the project and run all tests to verify that it works. This was tested on Fedora 25, and should work on any modern Linux or Mac system. Windows users might have to change the line endings of the test data.
+will compile the project and run all tests to verify that it works. This was tested on Fedora 25 and OS X 10.11, and should work on any modern Linux or Mac system. Windows users might have to change the line endings of the test data.
 
 To run the 3SAT algorithms on arbitrary input files `cd` into `src/`, and run:
 
@@ -47,6 +47,14 @@ Number | Algorithm
 0 | Brute force exponential solver
 1 | Bron-Kerbosch max-clique solver
 
+Algorithms
+==========
+
+The **Brute force exponential solver**, as it sounds, tries every possible assignment of truth values to variables, checking them along the way, and terminates when it finds a valid assignment.
+
+The **Bron-Kerbosch max-clique solver** first converts the formula into a graph, such that each term in a clause is a node, and all nodes are connected, with the exception of conflicting terms (*A ∧ ¬A*) and terms in the same clause. This graph is represented efficiently as an adjacency matrix. Then, it uses the [Bron-Kerbosch algorithm](https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) to find max cliques; as soon as a max-clique with as many nodes as the total number of clauses is found, the solver halts, since this must be a satisfying assignment.
+
 License
 =======
+
 This code is free software available under the [GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html) or newer, as published by the Free Software Foundation.
