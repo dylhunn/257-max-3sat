@@ -18,9 +18,16 @@ Data files for testing are stored in the `/test-data` folder.
 Project summary
 ===============
 
-The purpose of this project is to better understand various algorithms for **3SAT** and **MAX-3SAT** by implementing them, and then by comparing them through benchmarking.
+The purpose of this project is to better understand various algorithms for **3SAT** and **MAX-3SAT** by implementing them, and then by comparing them to each other.
 
 **3SAT** is a variant of the boolean satisfiability problem that requires formulae in conjunctive normal form, with three variables per clause. 3SAT is particularly useful as a "canonical" NP-Complete problem, and in practice, many hard problems are reduced to 3-CNF form as a preferred method of solving. 
+
+##### Background and related work
+
+Many competition-level 3SAT solvers exist. My goal with this project was to construct a "from-the-metal" implementation in C, in order to better understand how these solving algorithms work.
+
+For an example of one such solver, you might looks at [a 3SAT project from UVA](http://www.cs.virginia.edu/~jwh6q/3sat-web/).
+
 
 Building and running the project
 ================================
