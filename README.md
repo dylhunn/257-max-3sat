@@ -26,7 +26,7 @@ The purpose of this project is to better understand various algorithms for **3SA
 
 Many competition-level 3SAT solvers exist. My goal with this project was to construct a "from-the-metal" implementation in C, in order to better understand how these solving algorithms work.
 
-For an example of one such solver, you might looks at [a 3SAT project from UVA](http://www.cs.virginia.edu/~jwh6q/3sat-web/).
+For an example of one such solver, you might look at [a 3SAT project from UVA](http://www.cs.virginia.edu/~jwh6q/3sat-web/).
 
 
 Building and running the project
