@@ -11,7 +11,7 @@ Repo overview
 
 The source code for the project is stored in `/src`. Documentation for the code itself is contained in function comments of each header file.
 
-The project slides (forthcoming) are stored in the `/slides` folder.
+The project slides are stored in the `/slides` folder.
 
 Data files for testing are stored in the `/test-data` folder.
 
@@ -52,12 +52,22 @@ The **Brute force exponential solver**, as it sounds, tries every possible assig
 
 The **Bron-Kerbosch max-clique solver** first converts the formula into a graph, such that each term in a clause is a node, and all nodes are connected, with the exception of conflicting terms (*A ∧ ¬A*) and terms in the same clause. This graph is represented efficiently as an adjacency matrix. Then, it uses the [Bron-Kerbosch algorithm](https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm) to find max cliques; as soon as a max-clique with as many nodes as the total number of clauses is found, the solver halts, since this must be a satisfying assignment.
 
+##### Relative efficiency
+
+The naive-solver approach has exponential complexity, since it is a recursive algorithm with a branching factor of 2. 
+
+The clique solver also has exponential complexity. However. in the worst case, no n-vertex graph has more than 3^(n/3) max-cliques. In practice, we can do even better: our nodes are connected to at most (n-4) other nodes, since no node is connected to the other nodes in its clause. Indeed, the difference is substantial, although not asymptotic:
+![One exponential function grows more slowly.](http://i.imgur.com/qiGZl8P.png "One exponential function grows more slowly.")
+
 Other packaged code
 ===================
 
 This project also includes a custom hashset implementation, which is an efficient chaining hashset for integers that provides iterators. This allows simpler hash function behavior (the identity function, since the key space is evenly distributed integer indices from the adjacency matrix) and removes reliance on external dependencies.
 
 Additionally, a custom C test harness is present, to which new test cases can be easily added.
+
+##### Why a custom hashset
+The hashset is being used for the Bron-Kerbosh algorithm, to store nodes from the adjacency matrix. Since each node is represented as an index into the matrix, we expect uniformly distributed integer keys; thus, the identity function will suffice as a hash. Moreover, since we are only storing integers, no genericization is necessary. Both of these provide efficiency boosts. Moreover, the inclusion of the hashset allows the code to be modular, with no external dependencies.
 
 License
 =======
